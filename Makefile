@@ -95,7 +95,15 @@ export BATCH_PLATFORMS := $(BATCH_PLATFORMS)
 # ====================================================================================
 # Setup XPKG
 
-XPKG_REG_ORGS ?= xpkg.upbound.io/crossplane-contrib
+# Packages are pushed to every org listed here; xpkg.mk loops over it. ghcr.io
+# is the neutral community registry required of Crossplane community extension
+# projects, and xpkg.upbound.io is kept as an additional registry.
+XPKG_REG_ORGS ?= ghcr.io/crossplane-contrib xpkg.upbound.io/crossplane-contrib
+# Two inputs need exactly one registry rather than the list above: the family
+# package URL format, and the dependency reference written into each smaller
+# package's metadata. Both are held at the pre-existing registry so that this
+# change only adds a push target and does not alter published metadata.
+XPKG_FAMILY_REG_ORG ?= xpkg.upbound.io/crossplane-contrib
 # NOTE(hasheddan): skip promoting on xpkg.upbound.io as channel tags are
 # inferred.
 XPKG_REG_ORGS_NO_PROMOTE ?= xpkg.upbound.io/crossplane-contrib
@@ -103,13 +111,14 @@ XPKG_DIR = $(OUTPUT_DIR)/package
 XPKG_IGNORE = kustomization.yaml
 
 export XPKG_REG_ORGS := $(XPKG_REG_ORGS)
+export XPKG_FAMILY_REG_ORG := $(XPKG_FAMILY_REG_ORG)
 export XPKG_REG_ORGS_NO_PROMOTE := $(XPKG_REG_ORGS_NO_PROMOTE)
 export XPKG_DIR := $(XPKG_DIR)
 export XPKG_IGNORE := $(XPKG_IGNORE)
 
 CONFIG_CRD_GROUP = $(PROVIDER_NAME)
 PROVIDER_AUTH_GROUP = $(PROVIDER_NAME)
-CONFIG_DEPENDENCY_REG_ORG ?= $(XPKG_REG_ORGS)
+CONFIG_DEPENDENCY_REG_ORG ?= $(XPKG_FAMILY_REG_ORG)
 
 export CONFIG_CRD_GROUP := $(CONFIG_CRD_GROUP)
 export PROVIDER_AUTH_GROUP := $(PROVIDER_AUTH_GROUP)

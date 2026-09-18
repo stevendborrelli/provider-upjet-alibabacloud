@@ -265,6 +265,13 @@ jobs:
           version: ${{ env.DOCKER_BUILDX_VERSION }}
           install: true
 
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Login to Upbound
         uses: docker/login-action@v3
         if: env.UPBOUND_MARKETPLACE_PUSH_ROBOT_USR != ''
@@ -319,3 +326,7 @@ jobs:
         with:
           name: output
           path: _output/**
+
+      - name: Publish Artifacts
+        if: env.UPBOUND_MARKETPLACE_PUSH_ROBOT_USR != ''
+        run: make publish BRANCH_NAME=${GITHUB_REF##*/}

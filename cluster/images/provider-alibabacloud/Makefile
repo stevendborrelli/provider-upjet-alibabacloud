@@ -24,7 +24,7 @@ include ../../../build/makelib/imagelight.mk
 img.build:
 	@$(INFO) Family base image to build: $(IMAGE)
 	@$(INFO) Building image $${IMAGE}; \
-	$(MAKE) BUILD_ARGS="--load ${BUILD_ARGS}" IMAGE=$${IMAGE} XPKG_REG_ORGS=$(XPKG_REG_ORGS) img.build.shared; \
+	$(MAKE) BUILD_ARGS="--load ${BUILD_ARGS}" IMAGE=$${IMAGE} XPKG_REG_ORGS="$(XPKG_REG_ORGS)" img.build.shared; \
 	if [[ "$${LOAD_PACKAGES}" == "true" ]]; then \
 		$(MAKE) batch-process SUBPACKAGES="$(SUBPACKAGES)" XPKG_DIR=$(XPKG_DIR) XPKG_IGNORE=$(XPKG_IGNORE) BATCH_PLATFORMS=$(PLATFORM) BUILD_ONLY=true STORE_PACKAGES="$$(tr ' ' ',' <<< "$(SUBPACKAGES)")" && \
 		for s in $(SUBPACKAGES); do \
@@ -69,7 +69,7 @@ batch-process: $(CROSSPLANE_CLI)
 		--family-base-image $(BUILD_REGISTRY)/$(PROJECT_NAME) \
 		--platform $(BATCH_PLATFORMS) \
 		--provider-name $(PROJECT_NAME) \
-		--family-package-url-format $(XPKG_REG_ORGS)/%s:$(VERSION) \
+		--family-package-url-format $(XPKG_FAMILY_REG_ORG)/%s:$(VERSION) \
 		--package-repo-override monolith=$(PROJECT_NAME) --package-repo-override config=provider-family-$(PROVIDER_NAME) \
 		--provider-bin-root $(OUTPUT_DIR)/bin \
 		--output-dir $(XPKG_OUTPUT_DIR) \
